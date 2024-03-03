@@ -4,10 +4,17 @@ import logo from  '../images/joy.png'
 const Welcom : React.FC = () => {
   return (
     <div className='h-screen bg-black'>
-        <h1 className="mx-auto text-3xl text-white">Bienvenido a Joy</h1>
-        <img src={logo} alt="Descripción de la imagen" />
+         
+          
+        <h1 className="font-Embed text-center text-8xl text-white  pt-8  eba "> Bienvenido a joy</h1>
+       
+        <div  className ="flex justify-center  p-0">
+        <img src={logo} alt="Logo" className='' />
+        </div>  
 
-        <button className='mx-auto text-white bg-gray-400 opacity-90 hover:bg-cyan-500  rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 '>Acceder</button>
+        <div className="flex justify-center p-0 ">
+        <button className=' pl-10 pr-10 pt-4 pb-4 font-Embed  text-white bg-gray-400 opacity-90 hover:bg-cyan-500  rounded-lg text-xl  py-2.5 text-center '>Acceder</button>
+        </div>
     </div>
   )
 }
