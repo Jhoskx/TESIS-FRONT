@@ -7,12 +7,10 @@ import InitialData from './Components/InitialData';
 
 function App() {
   return (
-<Router>
   <Routes>
     <Route path='/Question' Component={InitialData}/>
     <Route path='/' Component={Welcom}/>
   </Routes>
-</Router>
     
   );
 }

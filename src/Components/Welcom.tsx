@@ -1,7 +1,14 @@
 import React from 'react'
 import logo from  '../images/joy.png'
+import { useNavigate  } from "react-router-dom";
 
 const Welcom : React.FC = () => {
+  const history = useNavigate ();
+
+  const handleClick = () => {
+    // Redirigir a otra página usando el método push
+    history('/Question');
+  };
   return (
     <div className='h-screen bg-black'>
          
@@ -13,7 +20,7 @@ const Welcom : React.FC = () => {
         </div>  
 
         <div className="flex justify-center p-0 ">
-        <button className=' pl-10 pr-10 pt-4 pb-4 font-Embed  text-white bg-gray-400 opacity-90 hover:bg-cyan-500  rounded-lg text-xl  py-2.5 text-center '>Acceder</button>
+        <button onClick={handleClick} className=' pl-10 pr-10 pt-4 pb-4 font-Embed  text-white bg-gray-400 opacity-90 hover:bg-cyan-500  rounded-lg text-xl  py-2.5 text-center '>Acceder</button>
         </div>
     </div>
   )
