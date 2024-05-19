@@ -15,4 +15,3 @@ const InitialData: React.FC = () => {
   )
 }
 export default InitialData
-
