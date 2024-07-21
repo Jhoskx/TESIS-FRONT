@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const TablaConRegistros: React.FC = () => {
+  const history = useNavigate ();
+
+  const handleClick = () => {
+    // Redirigir a otra página usando el método push
+    history('/ListOfResources');
+  };
   // Estado para almacenar los registros
   const [registros, setRegistros] = useState<string[]>([]);
 
@@ -47,7 +54,7 @@ const TablaConRegistros: React.FC = () => {
         <button className='text-white border rounded-md ml-2 h-7 w-7' onClick={agregarRegistro}>+</button>
       </div>
       <div className="flex justify-center mt-7 pb-8 ">
-            <button type='submit' className=' pl-5 pr-5 pt-2 pb-2 font-Embed  text-white bg-gray-400 opacity-90 hover:bg-gradient-to-r from-cyan-500  to-cyan-200 h-10 w-44 border-b-gray-950 rounded-lg text-xs  py-2.5 text-center '>Send</button>
+            <button onClick={handleClick}  type='submit' className=' pl-5 pr-5 pt-2 pb-2 font-Embed  text-white bg-gray-400 opacity-90 hover:bg-gradient-to-r from-cyan-500  to-cyan-200 h-10 w-44 border-b-gray-950 rounded-lg text-xs  py-2.5 text-center '>Send</button>
           </div>
     </div>
   );

@@ -12,7 +12,7 @@ function App() {
   return (
   <Routes>
     <Route path='/Question' Component={InitialData}/>
-    <Route path='/Description' Component={Description}/>
+    <Route path='/Description' Component={() => <Description responseData={responseData} />}/>
     <Route path='/TablaConRegistros' Component={TablaConRegistros}/>
     <Route path='/ListOfResources' Component={ListOfResources}/>
     <Route path='/Reply' Component={Reply}/>

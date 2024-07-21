@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import Description from './Description';
 
 interface FormData {
   name: string;
@@ -9,8 +11,18 @@ interface FormData {
   developmentType: string;
   typeEstimationId: number|undefined;
 }
+interface InitialDataProps {
+  responseData: any; // Ajusta el tipo 'any' para que coincida con el tipo real de responseData
+}
+
 
 const InitialData: React.FC = () => {
+  const history = useNavigate ();
+  const [responseData, setResponseData] = useState<any>(null);
+  const handleClick = () => {
+    // Redirigir a otra página usando el método push
+    history('/Description');
+  };
   const [formData, setFormData] = useState<FormData>({
     name: '',
     area: '',
@@ -33,7 +45,7 @@ const InitialData: React.FC = () => {
     e.preventDefault();
     try {
       const res = await axios.post('https://localhost:7211/api/Projects', formData);
-      setResponse(res.data);
+      setResponseData(res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('Error message: ', error.message);
@@ -68,7 +80,7 @@ const InitialData: React.FC = () => {
           <select    name="methodologyId"
               value={formData.methodologyId}
               onChange={handleChange}
-              className="inputStyle peer">
+              className="SelecStyle peer">
               <option value="">selecciona una opcion</option>
               <option value="2">uno</option>
             </select> 
@@ -91,7 +103,7 @@ const InitialData: React.FC = () => {
             <select    name="typeEstimationId"
               value={formData.developmentType}
               onChange={handleChange}
-              className="inputStyle peer">
+              className="SelecStyle peer">
               <option value="">selecciona una opcion
 
               </option>
@@ -102,11 +114,13 @@ const InitialData: React.FC = () => {
           </div> 
 
           <div className=" mx-auto col-span-full mt-7 pb-8 ">
-            <button type='submit' className=' pl-5 pr-5 pt-2 pb-2 font-Embed  text-white bg-gray-400 opacity-90 hover:bg-gradient-to-r from-cyan-500  to-cyan-200 h-10 w-44 border-b-gray-950 rounded-lg text-xs  py-2.5 text-center '>Send</button>
+            <button onClick={handleClick} type='submit' className=' pl-5 pr-5 pt-2 pb-2 font-Embed  text-white bg-gray-400 opacity-90 hover:bg-gradient-to-r from-cyan-500  to-cyan-200 h-10 w-44 border-b-gray-950 rounded-lg text-xs  py-2.5 text-center '>Send</button>
           </div>
         </div>
       </form>
-    {response && <div>Response: {response}</div>}
+    {response && <div>Response: {response} <Description responseData={responseData} /></div>  }
+    setResponseData(response.data); // Guarda la respuesta en el estado local
+
     </div>
   );
 };
