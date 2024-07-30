@@ -1,7 +1,7 @@
 import { format } from 'path'
 import React from 'react'
 
-const reply: React.FC = () => {
+const Reply: React.FC = () => {
   return (
     <div className='backimage  '>
 
@@ -18,5 +18,5 @@ const reply: React.FC = () => {
     </div>
   )
 }
-export default reply
+export default Reply
 

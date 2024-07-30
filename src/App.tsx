@@ -12,11 +12,11 @@ function App() {
   return (
   <Routes>
     <Route path='/Question' Component={InitialData}/>
-    <Route path='/Description' Component={() => <Description responseData={responseData} />}/>
-    <Route path='/TablaConRegistros' Component={TablaConRegistros}/>
-    <Route path='/ListOfResources' Component={ListOfResources}/>
-    <Route path='/Reply' Component={Reply}/>
-    <Route path='/' Component={Welcom}/>
+    <Route path='/Description' element={<Description responseData={null} />} /> 
+    <Route path='/TablaConRegistros' element={<TablaConRegistros/>}/>
+    <Route path='/ListOfResources' element={<ListOfResources/>}/>
+    <Route path='/Reply' element={<Reply/>}/>
+    <Route path='/' element={<Welcom/>}/>
   </Routes>
     
   );
