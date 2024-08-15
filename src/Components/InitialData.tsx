@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Description from './Description';
 
 interface FormData {
   name: string;
@@ -14,7 +13,6 @@ interface FormData {
 
 const InitialData: React.FC = () => {
   const navigate = useNavigate();
-  const [responseData, setResponseData] = useState<any>(null);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     area: '',
@@ -23,7 +21,6 @@ const InitialData: React.FC = () => {
     developmentType: '',
     typeEstimationId: undefined
   });
-  const [response, setResponse] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -32,23 +29,42 @@ const InitialData: React.FC = () => {
       [name]: value,
     }));
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const res = await axios.post('https://localhost:7211/api/Projects', formData);
-      setResponseData(res.data);
-      navigate('/Description'); // Redirigir después de una respuesta exitosa
+      console.log('Respuesta del servidor:', res.data); // Verifica la respuesta aquí
+      if (res.data) {
+        navigate('/Description', { state: { responseData: res.data } });
+      } else {
+        console.error('La respuesta del servidor no contiene datos.');
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('Error message: ', error.message);
-        // Handle error accordingly
       } else {
         console.error('Unexpected error: ', error);
       }
     }
   };
-
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   try {
+  //     const res = await axios.post('https://localhost:7211/api/Projects', formData);
+  //     console.log('Respuesta del servidor:', res.data); // Asegúrate de que el `id` esté en `res.data`
+  //     if (res.data && res.data.Id) {
+  //       navigate('/Description', { state: { responseData: res.data } });
+  //     } else {
+  //       console.error('El ID del proyecto no está presente en la respuesta.');
+  //     }
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       console.error('Error message: ', error.message);
+  //     } else {
+  //       console.error('Unexpected error: ', error);
+  //     }
+  //   }
+  // };
   return (
     <div className='backimage '>
       <div className="absolute inset-40 rounded-sm bg-trn bg-opacity-60 backdrop-filter backdrop-blur-sm"></div>
@@ -88,7 +104,7 @@ const InitialData: React.FC = () => {
               onChange={handleChange}
               className="SelecStyle peer"
             >
-              <option value="">Selecciona una opción</option>
+              <option value=""></option>
               <option value="2">Uno</option>
             </select>
             <label htmlFor="DevelopmentType" className="inputLabel">Tipo de metodología</label>
@@ -139,7 +155,7 @@ const InitialData: React.FC = () => {
           </div>
         </div>
       </form>
-      {response && <div>Response: {response} <Description responseData={responseData} /></div>}
+    
     </div>
   );
 };

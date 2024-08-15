@@ -8,18 +8,19 @@ import TablaConRegistros from './Components/TablaConRegistros'
 import ListOfResources from './Components/ListOfResources'
 import Reply from './Components/reply'
 
-function App() {
+const App: React.FC = () => {
   return (
-  <Routes>
-    <Route path='/Question' Component={InitialData}/>
-    <Route path='/Description' element={<Description responseData={null} />} /> 
-    <Route path='/TablaConRegistros' element={<TablaConRegistros/>}/>
-    <Route path='/ListOfResources' element={<ListOfResources/>}/>
-    <Route path='/Reply' element={<Reply/>}/>
-    <Route path='/' element={<Welcom/>}/>
-  </Routes>
-    
+    <Router>
+      <Routes>
+        <Route path='/Question' element={<InitialData />} />
+        <Route path='/Description' element={<Description />} />
+        <Route path='/TablaConRegistros' element={<TablaConRegistros />} />
+        <Route path='/ListOfResources' element={<ListOfResources />} />
+        <Route path='/Reply' element={<Reply />} />
+        <Route path='/' element={<Welcom />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
