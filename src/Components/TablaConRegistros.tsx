@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+
 
 const TablaConRegistros: React.FC = () => {
-  const history = useNavigate ();
+  const navigate = useNavigate();
+  const location =useState();
+
 
   const handleClick = () => {
     // Redirigir a otra página usando el método push
@@ -26,6 +29,7 @@ const TablaConRegistros: React.FC = () => {
       setNuevoRegistro('');
     }
   };
+  console.log(registros);
 
   return (
     <div className='backimage h-screen'>
