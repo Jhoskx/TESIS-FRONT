@@ -9,7 +9,7 @@ const TablaConRegistros: React.FC = () => {
 
   const handleClick = () => {
     // Redirigir a otra página usando el método push
-    history('/ListOfResources');
+    navigate('/ListOfResources');
   };
   // Estado para almacenar los registros
   const [registros, setRegistros] = useState<string[]>([]);
