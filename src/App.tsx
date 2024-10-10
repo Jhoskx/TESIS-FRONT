@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route,Link, Routes } from 'react-router-dom';
 import Welcom from './Components/Welcom';
 import InitialData from './Components/InitialData';
 import Description from './Components/Description';
-import TablaConRegistros from './Components/TablaConRegistros'
+import TablaConRegistros from './Components/UseCases'
 import ListOfResources from './Components/ListOfResources'
 import Reply from './Components/reply'
 

@@ -23,9 +23,14 @@ const Description: React.FC = () => {
     e.preventDefault();
     if (responseData ) {
       try {
-        const response = await axios.put(`https://localhost:7211/api/Projects/${responseData}`, { description });
-        console.log('Respuesta del servidor:', response.data);
-        navigate('/TablaConRegistros');
+        const res = await axios.put(`https://localhost:7211/api/Projects/${responseData}`, { description });
+        console.log('Respuesta del servidor:', res.data); 
+        if (res.data) {
+          navigate('/TablaConRegistros', { state: { responseData: res.data } });
+        } else {
+          console.error('La respuesta del servidor no contiene datos.');
+        }
+
       } catch (error) {
         console.error('Error al hacer la solicitud PUT:', error);
       }

@@ -1,31 +1,68 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const ListOfResources = () => {
-  const [registros, setRegistros] = useState<string[]>([]);
-  const [nuevoRegistro, setNuevoRegistro] = useState<string>('');
+const ListOfResources : React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const responseData = location.state?.responseData;
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNuevoRegistro(event.target.value);
+  type Registro = {
+    descripcion: string;
+    horas: number;
   };
 
-  const agregarRegistro = () => {
-    if (nuevoRegistro.trim() !== '') {
-      setRegistros([...registros, nuevoRegistro]);
-      setNuevoRegistro('');
+  const [registros, setRegistros] = useState<Registro []>([]);
+  const [NuevoRecurso, setNuevoRecurso] = useState<string>('');
+  const [Horas, setHoras] = useState<number>(0);
+
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>, field: 'descripcion' | 'horas') => {
+    if (field === 'descripcion') {
+      setNuevoRecurso(event.target.value);
+    } else if (field === 'horas') {
+      setHoras(Number(event.target.value));
     }
   };
 
-  const handleClick = () => {
-    axios.post('URL_DE_TU_API', { registros })
-      .then(response => {
-        console.log('Datos enviados exitosamente:', response.data);
-        // Puedes agregar alguna lógica adicional aquí, como mostrar una notificación de éxito
-      })
-      .catch(error => {
-        console.error('Error al enviar los datos:', error);
-        // Puedes agregar alguna lógica adicional aquí, como mostrar una notificación de error
-      });
+
+  
+
+  const agregarRegistro = () => {
+    if (NuevoRecurso.trim() !== '') {
+      setRegistros([...registros, {descripcion:NuevoRecurso,horas:Horas}]);
+      setNuevoRecurso('');
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+
+    e.preventDefault();
+    if (responseData) 
+      {
+        try {
+console.log("s"+ responseData)
+          const resourceRequests = registros.map(registro => ({
+            description: registro,
+            projectId: responseData // Suponiendo que `responseData` es el ID del proyecto
+          }));
+
+          const response = await axios.post(`https://localhost:7211/api/Resources`, { resourceRequests });
+          console.log('Respuesta del servidor:', response.data);
+  
+          // Redirigir a otra página pasando la respuesta del servidor
+          navigate('/ListOfResources', { state: { responseDescription: response.data } });
+
+        }
+        catch (error) {
+          console.error('Error al hacer la solicitud POST:', error);
+        }
+
+      }else {
+        console.error('ID del proyecto no está definido :');
+      }
+
+    
   };
 
   return (
@@ -36,13 +73,14 @@ const ListOfResources = () => {
       <table className='mx-auto w-3/4 overflow-auto'>
         <thead>
           <tr>
-            <th className='text-white font-Embed'>Lista de casos de uso</th>
+            <th className='text-white font-Embed'>Lista de Recursos</th>
           </tr>
         </thead>
         <tbody className='text-center'>
           {registros.map((registro, index) => (
             <tr className='text-white font-Embed rounded-md' key={index}>
-              <td className='text-white border rounded-lg'>{registro}</td>
+              <td className='text-white border rounded-lg'>{registro.descripcion}</td>
+              <td className='text-white border rounded-lg'>{registro.horas}</td>
             </tr>
           ))}
         </tbody>
@@ -52,17 +90,20 @@ const ListOfResources = () => {
           className='w-2/3 bg-transparent border border-white focus:outline-none rounded-lg placeholder:text-white placeholder:text-center text-white'
           type="text"
           placeholder="Nuevo Registro"
-          value={nuevoRegistro}
-          onChange={handleInputChange}
+          value={NuevoRecurso}
+          onChange={(e)=>handleInputChange(e,'descripcion')}
+        />
+        <input
+          className='w-2/3 bg-transparent border border-white focus:outline-none rounded-lg placeholder:text-white placeholder:text-center text-white'
+          type="text"
+          placeholder="Nuevo Registro"
+          value={Horas}
+          onChange={(e)=>handleInputChange(e,'horas')}
         />
         <button className='text-white border rounded-md ml-2 h-7 w-7' onClick={agregarRegistro}>+</button>
       </div>
       <div className="flex justify-center mt-7 pb-8">
-        <button
-          onClick={handleClick}
-          type='submit'
-          className='pl-5 pr-5 pt-2 pb-2 font-Embed text-white bg-gray-400 opacity-90 hover:bg-gradient-to-r from-cyan-500 to-cyan-200 h-10 w-44 border-b-gray-950 rounded-lg text-xs py-2.5 text-center'
-        >
+      <button onClick={handleSubmit} className='pl-5 pr-5 pt-2 pb-2 font-Embed text-white bg-gray-400 opacity-90 hover:bg-gradient-to-r from-cyan-500 to-cyan-200 h-10 w-44 border-b-gray-950 rounded-lg text-xs text-center'>
           Send
         </button>
       </div>
