@@ -93,6 +93,7 @@ console.log("s"+ responseData)
           value={NuevoRecurso}
           onChange={(e)=>handleInputChange(e,'descripcion')}
         />
+        
         <input
           className='w-2/3 bg-transparent border border-white focus:outline-none rounded-lg placeholder:text-white placeholder:text-center text-white'
           type="text"

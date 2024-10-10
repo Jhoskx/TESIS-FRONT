@@ -17,7 +17,7 @@ const UseCases: React.FC = () => {
   const [NuevaDescripcion, setNuevaDescripcion] = useState<string>('');
   const [NuevaComplejidad, setNuevaComplejidad] = useState<string>('');
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>, field: 'descripcion' | 'complejidad') => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: 'descripcion' | 'complejidad') => {
     if (field === 'descripcion') {
       setNuevaDescripcion(event.target.value);
     } else if (field === 'complejidad') {
@@ -86,13 +86,17 @@ const UseCases: React.FC = () => {
     value={NuevaDescripcion}
     onChange={(e) => handleInputChange(e, 'descripcion')} // Cambia la descripción
   />  
- <input 
-    className='w-2/5 bg-transparent border border-white focus:outline-none rounded-lg placeholder:text-white placeholder:text-center text-white'
-    type="text"
-    placeholder="Complejidad"
-    value={NuevaComplejidad}
-    onChange={(e) => handleInputChange(e, 'complejidad')} // Cambia la complejidad
-  />
+  
+<select
+  className='w-2/5 bg-transparent border border-white focus:outline-none rounded-lg text-white'
+  value={NuevaComplejidad}
+  onChange={(e) => handleInputChange(e, 'complejidad')} // Cambia la complejidad
+>
+  <option value={1}>Baja</option>
+  <option value={2}>Media</option>
+  <option value={3}>Alta</option>
+</select>
+
         <button className='text-white border rounded-md ml-2 h-7 w-7' onClick={agregarRegistro}>+</button>
       </div>
       <div className="flex justify-center mt-7 pb-8">
