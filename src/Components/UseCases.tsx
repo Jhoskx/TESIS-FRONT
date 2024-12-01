@@ -92,9 +92,9 @@ const UseCases: React.FC = () => {
   value={NuevaComplejidad}
   onChange={(e) => handleInputChange(e, 'complejidad')} // Cambia la complejidad
 >
-  <option value={1}>Baja</option>
-  <option value={2}>Media</option>
-  <option value={3}>Alta</option>
+  <option value={1}>Simple</option>
+  <option value={2}>Promedio</option>
+  <option value={3}>Complejo</option>
 </select>
 
         <button className='text-white border rounded-md ml-2 h-7 w-7' onClick={agregarRegistro}>+</button>
