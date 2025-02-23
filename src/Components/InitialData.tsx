@@ -9,6 +9,7 @@ interface FormData {
   responsiblePosition: string;
   developmentType: string;
   typeEstimationId: number | undefined;
+  expertOpinion?: string;
 }
 
 const InitialData: React.FC = () => {
@@ -19,21 +20,40 @@ const InitialData: React.FC = () => {
     methodologyId: undefined,
     responsiblePosition: '',
     developmentType: '',
-    typeEstimationId: undefined
+    typeEstimationId: undefined,
+    expertOpinion: '',
   });
+
+  const [showExpertOpinionInput, setShowExpertOpinionInput] = useState(false);
+
+  const [showLabel, setShowLabel,] = useState(false);
+  const [showLabelmethodology, setShowLabelmethodology,] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+
+    // Verifica si el campo cambiado es "typeEstimationId"
+   
+  if (name === "typeEstimationId") {
+    setShowLabel(value !== ""); // Muestra el label solo si el value no es vacío
+    setShowExpertOpinionInput(value === "2");
+  }
+
+  if (name === "methodologyId") {
+    setShowLabelmethodology(value !== ""); // Muestra el label solo si el value no es vacío
+  }
+
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
     }));
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const res = await axios.post('https://localhost:7211/api/Projects', formData);
-      console.log('Respuesta del servidor:', res.data); // Verifica la respuesta aquí
+      console.log('Respuesta del servidor:', res.data);
       if (res.data) {
         navigate('/Description', { state: { responseData: res.data } });
       } else {
@@ -47,31 +67,16 @@ const InitialData: React.FC = () => {
       }
     }
   };
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   try {
-  //     const res = await axios.post('https://localhost:7211/api/Projects', formData);
-  //     console.log('Respuesta del servidor:', res.data); // Asegúrate de que el `id` esté en `res.data`
-  //     if (res.data && res.data.Id) {
-  //       navigate('/Description', { state: { responseData: res.data } });
-  //     } else {
-  //       console.error('El ID del proyecto no está presente en la respuesta.');
-  //     }
-  //   } catch (error) {
-  //     if (axios.isAxiosError(error)) {
-  //       console.error('Error message: ', error.message);
-  //     } else {
-  //       console.error('Unexpected error: ', error);
-  //     }
-  //   }
-  // };
+
   return (
     <div className='backimage '>
       <div className="absolute inset-40 rounded-sm bg-trn bg-opacity-60 backdrop-filter backdrop-blur-sm"></div>
       <div className="blur-xl z-20 w-1/2 h-1/2"></div>
       <form className='flex h-screen items-center justify-center' onSubmit={handleSubmit}>
         <div className='mx-auto w-3/4 grid grid-cols-3 z-10'>
-          <h1 className='text-center font-Embed text-white text-7xl pt-10 mb-10 col-span-full'>Complete la siguiente información</h1>
+          <h1 className='text-center font-Embed text-white text-7xl pt-10 mb-10 col-span-full'>
+            Complete la siguiente información
+          </h1>
 
           <div className="relative ml-2 mt-3 mb-3">
             <input
@@ -82,7 +87,7 @@ const InitialData: React.FC = () => {
               className="inputStyle peer"
               placeholder=" "
             />
-            <label htmlFor="NombreProyecto" className="inputLabel">Nombre del proyecto</label>
+            <label htmlFor="name" className="inputLabel">Nombre del proyecto</label>
           </div>
 
           <div className="relative ml-2 mt-3 mb-3">
@@ -94,20 +99,32 @@ const InitialData: React.FC = () => {
               className="inputStyle peer"
               placeholder=" "
             />
-            <label htmlFor="AreaParaDesarollar" className="inputLabel">Área para la que se Desarrolla</label>
+            <label htmlFor="area" className="inputLabel">Área para la que se desarrolla</label>
           </div>
 
           <div className="relative ml-2 mt-3 mb-3">
             <select
               name="methodologyId"
-              value={formData.methodologyId}
+              value={formData.methodologyId ?? ""}
               onChange={handleChange}
               className="SelecStyle peer"
             >
-              <option value=""></option>
-              <option value="2">Uno</option>
+              <option value="" disabled>Metodologia de Desarollo</option>
+              <option value="1">Metodología Uno</option>
+              <option value="2">Metodología Dos</option>
             </select>
-            <label htmlFor="DevelopmentType" className="inputLabel">Tipo de metodología</label>
+
+
+            {showLabelmethodology && (
+              <label htmlFor="methodologyId" className="inputLabel">Metodologia de Desarollo</label>
+              // <label
+              //   htmlFor="typeEstimationId"
+              //   // className="absolute left-2 top-0 text-sm text-blue-600 transition-all"
+              //   className="inputLabel"
+              // >
+              //   Tipo de Estimación
+              // </label>
+            )}
           </div>
 
           <div className="relative ml-2 mt-5 mb-3">
@@ -119,7 +136,9 @@ const InitialData: React.FC = () => {
               className="inputStyle peer"
               placeholder=" "
             />
-            <label htmlFor="cargoResponsable" className="inputLabel">Cargo de la persona Responsable del proyecto</label>
+            <label htmlFor="responsiblePosition" className="inputLabel">
+              Cargo del responsable del proyecto
+            </label>
           </div>
 
           <div className="relative ml-2 mt-5 mb-3">
@@ -131,31 +150,59 @@ const InitialData: React.FC = () => {
               className="inputStyle peer"
               placeholder=" "
             />
-            <label htmlFor="TipoDesarollo" className="inputLabel">Tipo de Desarrollo</label>
+            <label htmlFor="developmentType" className="inputLabel">Tipo de Desarrollo</label>
           </div>
 
           <div className="relative ml-2 mt-5 mb-3">
             <select
               name="typeEstimationId"
-              value={formData.typeEstimationId}
+              value={formData.typeEstimationId ?? ""}
               onChange={handleChange}
               className="SelecStyle peer"
             >
-              <option value="">Selecciona una opción</option>
+              <option value="" disabled>Tipo de Estimación</option>
               <option value="1">Algoritmo</option>
               <option value="2">Opinión Experto</option>
             </select>
-            <label htmlFor="DevelopmentType" className="inputLabel">Tipo de estimación</label>
+            {showLabel && (
+              <label
+                htmlFor="typeEstimationId"
+                // className="absolute left-2 top-0 text-sm text-blue-600 transition-all"
+                className="inputLabel"
+              >
+                Tipo de Estimación
+              </label>
+            )}
           </div>
 
+          {showExpertOpinionInput && (
+            <div className="relative ml-2 mt-3 mb-3">
+              <input
+                type="text"
+                name="expertOpinion"
+                value={formData.expertOpinion || ""}
+                onChange={handleChange}
+                className="inputStyle peer"
+                placeholder=" "
+              />
+              <label htmlFor="expertOpinion" className="inputLabel">
+                Email
+              </label>
+            </div>
+          )}
+
           <div className="mx-auto col-span-full mt-7 pb-8">
-            <button type='submit' className='pl-5 pr-5 pt-2 pb-2 font-Embed text-white bg-gray-400 opacity-90 hover:bg-gradient-to-r from-cyan-500 to-cyan-200 h-10 w-44 border-b-gray-950 rounded-lg text-xs py-2.5 text-center'>
-              Send
+            <button
+              type='submit'
+              className='pl-5 pr-5 pt-2 pb-2 font-Embed text-white bg-gray-400 opacity-90
+                         hover:bg-gradient-to-r from-cyan-500 to-cyan-200 h-10 w-44
+                         border-b-gray-950 rounded-lg text-xs py-2.5 text-center'
+            >
+              Enviar
             </button>
           </div>
         </div>
       </form>
-    
     </div>
   );
 };
