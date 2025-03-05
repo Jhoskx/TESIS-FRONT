@@ -9,7 +9,7 @@ const Description: React.FC = () => {
   const responseData = location.state?.responseData;
 
   useEffect(() => {
-    if (responseData) {
+    if (responseData) {  
       setDescription(responseData.description);
     }
   }, [responseData]);
@@ -26,7 +26,7 @@ const Description: React.FC = () => {
         const res = await axios.put(`https://localhost:7211/api/Projects/${responseData}`, { description });
         console.log('Respuesta del servidor:', res.data); 
         if (res.data) {
-          navigate('/TablaConRegistros', { state: { responseData: res.data } });
+          navigate('/UseCase', { state: { responseData: res.data } });
         } else {
           console.error('La respuesta del servidor no contiene datos.');
         }

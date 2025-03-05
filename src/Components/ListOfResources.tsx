@@ -43,15 +43,16 @@ const ListOfResources : React.FC = () => {
         try {
 console.log("s"+ responseData)
           const resourceRequests = registros.map(registro => ({
-            description: registro,
-            projectId: responseData // Suponiendo que `responseData` es el ID del proyecto
+            description: registro.descripcion,
+            projectId: responseData,
+            hoursPerWeek: registro.horas// Suponiendo que `responseData` es el ID del proyecto
           }));
 
           const response = await axios.post(`https://localhost:7211/api/Resources`, { resourceRequests });
           console.log('Respuesta del servidor:', response.data);
   
           // Redirigir a otra página pasando la respuesta del servidor
-          navigate('/ListOfResources', { state: { responseDescription: response.data } });
+          navigate('/Reply', { state: { responseData: response.data } });
 
         }
         catch (error) {
@@ -89,7 +90,7 @@ console.log("s"+ responseData)
         <input
           className='w-2/3 bg-transparent border border-white focus:outline-none rounded-lg placeholder:text-white placeholder:text-center text-white'
           type="text"
-          placeholder="Nuevo Registro"
+          placeholder="colaborador"
           value={NuevoRecurso}
           onChange={(e)=>handleInputChange(e,'descripcion')}
         />
@@ -97,8 +98,8 @@ console.log("s"+ responseData)
         <input
           className='w-2/3 bg-transparent border border-white focus:outline-none rounded-lg placeholder:text-white placeholder:text-center text-white'
           type="text"
-          placeholder="Nuevo Registro"
-          value={Horas}
+          placeholder="Horas"
+          value={Horas||'' }
           onChange={(e)=>handleInputChange(e,'horas')}
         />
         <button className='text-white border rounded-md ml-2 h-7 w-7' onClick={agregarRegistro}>+</button>

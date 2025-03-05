@@ -49,7 +49,7 @@ const UseCases: React.FC = () => {
         console.log('Respuesta del servidor:', response.data);
   
         // Redirigir a otra página pasando la respuesta del servidor
-        navigate('/ListOfResources', { state: { responseData: response.data } });
+        navigate('/ListOfResources  ', { state: { responseData: response.data } });
       } catch (error) {
         console.error('Error al hacer la solicitud POST:', error);
       }
@@ -88,13 +88,14 @@ const UseCases: React.FC = () => {
   />  
   
 <select
-  className='w-2/5 bg-transparent border border-white focus:outline-none rounded-lg text-white'
+  className='w-2/5 bg-transparent border border-white focus:outline-none rounded-lg text-white bg-black'
   value={NuevaComplejidad}
   onChange={(e) => handleInputChange(e, 'complejidad')} // Cambia la complejidad
 >
-  <option value={1}>Simple</option>
-  <option value={2}>Promedio</option>
-  <option value={3}>Complejo</option>
+  <option value={0} className='bg-black'>Complejidad</option>
+  <option value={1} className='bg-black'>Simple</option>
+  <option value={2} className='bg-black'>Promedio</option>
+  <option value={3} className='bg-black'>Complejo</option>
 </select>
 
         <button className='text-white border rounded-md ml-2 h-7 w-7' onClick={agregarRegistro}>+</button>

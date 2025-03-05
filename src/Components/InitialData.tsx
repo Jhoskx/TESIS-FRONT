@@ -10,6 +10,7 @@ interface FormData {
   developmentType: string;
   typeEstimationId: number | undefined;
   expertOpinion?: string;
+  email?:string;
 }
 
 const InitialData: React.FC = () => {
@@ -22,6 +23,7 @@ const InitialData: React.FC = () => {
     developmentType: '',
     typeEstimationId: undefined,
     expertOpinion: '',
+    email:'',
   });
 
   const [showExpertOpinionInput, setShowExpertOpinionInput] = useState(false);
@@ -179,13 +181,13 @@ const InitialData: React.FC = () => {
             <div className="relative ml-2 mt-3 mb-3">
               <input
                 type="text"
-                name="expertOpinion"
-                value={formData.expertOpinion || ""}
+                name="email"
+                value={formData.email  || ""}
                 onChange={handleChange}
                 className="inputStyle peer"
                 placeholder=" "
               />
-              <label htmlFor="expertOpinion" className="inputLabel">
+              <label htmlFor="email" className="inputLabel">
                 Email
               </label>
             </div>
