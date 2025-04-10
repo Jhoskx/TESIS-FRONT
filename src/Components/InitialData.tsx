@@ -1,35 +1,157 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 interface FormData {
   name: string;
-  area: string;
+  areaId: number | undefined;
   methodologyId: number | undefined;
-  responsiblePosition: string;
-  developmentType: string;
+  chargeId: number | undefined;
+  developmentTypeId: number | undefined;
   typeEstimationId: number | undefined;
   expertOpinion?: string;
   email?:string;
+}
+
+
+
+
+interface DevelopmentType {
+  id: number;
+  description: string;
+}
+
+interface Area {
+  id: number;
+  description: string;
+}
+
+interface Charge {
+  id: number;
+  description: string;
+}
+
+interface Methodology {
+  id: number;
+  description: string;
 }
 
 const InitialData: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     name: '',
-    area: '',
+    areaId: undefined,
     methodologyId: undefined,
-    responsiblePosition: '',
-    developmentType: '',
+    chargeId: undefined,
+    developmentTypeId: undefined,
     typeEstimationId: undefined,
     expertOpinion: '',
     email:'',
   });
 
+//#region 
+// const [developmentTypes, setDevelopmentTypes] = useState([]);
+const [developmentTypes, setDevelopmentTypes] = useState<DevelopmentType[]>([]);
+
+const [areas, setAreas] =  useState<Area[]>([]);
+const [Charge, setCharges] = useState<Charge[]>([]);
+const [Methodology, setMethodology] = useState<Methodology[]>([]);
+const [showModal, setShowModal] = useState(false);
+const [emailError, setEmailError] = useState<string | null>(null);
+
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      console.log("Llamando a la API...");
+
+      const [AreaDev, DevMeth, ChargeRes,DevType] = await Promise.all([
+        axios.get("https://localhost:7211/api/Master/Areas"),
+        axios.get("https://localhost:7211/api/Master/DevelopmentMethodology"),
+        axios.get("https://localhost:7211/api/Master/PositionResponsible"),
+        axios.get("https://localhost:7211/api/Master/DevelopmentType"),
+      ]);
+
+      console.log("Datos obtenidos - Development Types:", AreaDev.data);
+
+      if (Array.isArray(AreaDev.data) && AreaDev.data.length > 0) {
+        setAreas(AreaDev.data);
+        setMethodology(DevMeth.data);
+        setCharges(ChargeRes.data);
+        setDevelopmentTypes(DevType.data);
+    
+        console.log(AreaDev.data);
+        console.log(DevMeth.data);
+        console.log(ChargeRes.data);
+        console.log(DevType.data);
+
+      } else {
+        console.warn("La API de Development Types devolvió un array vacío o no válido.");
+      }
+
+      
+    } catch (error) {
+      console.error("Error al obtener los datos:", error);
+    }
+  };
+
+  fetchData();
+}, []);
+
+function sumarDiasHabiles(fecha: Date, diasHabiles: number): Date {
+  let resultado = new Date(fecha);
+  let contador = 0;
+
+  while (contador < diasHabiles) {
+    resultado.setDate(resultado.getDate() + 1);
+    const dia = resultado.getDay();
+    // 0: domingo, 6: sábado
+    if (dia !== 0 && dia !== 6) {
+      contador++;
+    }
+  }
+
+  return resultado;
+}
+const handleBlur = (email: string) => {
+  const isValidEmail = /\S+@\S+\.\S+/.test(email);
+  console.log("onBlur ejecutado, email válido?", isValidEmail);
+  const fechaLimite = sumarDiasHabiles(new Date(), 15);
+  setPlazoEstimado(fechaLimite); // 👈 guardamos la fecha en estado
+  setShowModal(true);
+
+  if (isValidEmail) {
+    setEmailError(null); // limpia el error
+    setShowModal(true);  // muestra modal
+  } else {
+    setEmailError("El email ingresado no es válido."); // muestra error
+    setShowModal(false); // evita mostrar el modal si es inválido
+  }
+};
+
+
+
+// 🔹 useEffect para ver cuando developmentTypes realmente cambie
+useEffect(() => {
+  console.log("Estado actualizado:", developmentTypes);
+}, [developmentTypes]);
+//#endregion
+// useEffect(() => {
+//   if (formData.email?.trim() !== "") {
+//     setShowModal(true);
+//   }
+// }, [formData.email]);
+  
   const [showExpertOpinionInput, setShowExpertOpinionInput] = useState(false);
 
   const [showLabel, setShowLabel,] = useState(false);
   const [showLabelmethodology, setShowLabelmethodology,] = useState(false);
+  const [showLabelArea, setShowLabelArea,] = useState(false);
+  const [showLabelCharge, setShowLabelCharge,] = useState(false);
+  const [showLabelDevType, setShowLabelDevYpe,] = useState(false);
+  const [plazoEstimado, setPlazoEstimado] = useState<Date | null>(null);
+
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -37,12 +159,31 @@ const InitialData: React.FC = () => {
     // Verifica si el campo cambiado es "typeEstimationId"
    
   if (name === "typeEstimationId") {
-    setShowLabel(value !== ""); // Muestra el label solo si el value no es vacío
+    setShowLabel(value !== ""); 
     setShowExpertOpinionInput(value === "2");
+    
   }
 
   if (name === "methodologyId") {
-    setShowLabelmethodology(value !== ""); // Muestra el label solo si el value no es vacío
+    setShowLabelmethodology(Number(value) !== 3 && value !== ""); 
+  }
+
+  if (name === "areaId") {
+    setShowLabelArea(Number(value) !== 1 && value !== "");  
+  }
+
+
+  if (name === "chargeId") {
+    setShowLabelCharge(Number(value) !== 1 && value !== "");  
+  }
+
+  if (name === "developmentTypeId") {
+    setShowLabelDevYpe(Number(value) !== 2 && value !== "");  
+  }
+
+  if (name === "name") {
+    const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]*$/;
+    if (!soloLetras.test(value)) return; // Ignora caracteres inválidos
   }
 
     setFormData((prevFormData) => ({
@@ -68,6 +209,10 @@ const InitialData: React.FC = () => {
         console.error('Unexpected error: ', error);
       }
     }
+
+
+
+   
   };
 
   return (
@@ -80,7 +225,7 @@ const InitialData: React.FC = () => {
             Complete la siguiente información
           </h1>
 
-          <div className="relative ml-2 mt-3 mb-3">
+          <div className="relative ml-2 mt-5 mb-3">
             <input
               type="text"
               name="name"
@@ -92,68 +237,119 @@ const InitialData: React.FC = () => {
             <label htmlFor="name" className="inputLabel">Nombre del proyecto</label>
           </div>
 
-          <div className="relative ml-2 mt-3 mb-3">
-            <input
-              type="text"
-              name="area"
-              value={formData.area}
-              onChange={handleChange}
-              className="inputStyle peer"
-              placeholder=" "
-            />
-            <label htmlFor="area" className="inputLabel">Área para la que se desarrolla</label>
-          </div>
-
-          <div className="relative ml-2 mt-3 mb-3">
-            <select
-              name="methodologyId"
-              value={formData.methodologyId ?? ""}
-              onChange={handleChange}
-              className="SelecStyle peer"
-            >
-              <option value="" disabled>Metodologia de Desarollo</option>
-              <option value="1">Metodología Uno</option>
-              <option value="2">Metodología Dos</option>
-            </select>
-
-
-            {showLabelmethodology && (
-              <label htmlFor="methodologyId" className="inputLabel">Metodologia de Desarollo</label>
-              // <label
-              //   htmlFor="typeEstimationId"
-              //   // className="absolute left-2 top-0 text-sm text-blue-600 transition-all"
-              //   className="inputLabel"
-              // >
-              //   Tipo de Estimación
-              // </label>
+<div className="relative ml-2 mt-5 mb-3">
+      <select
+        name="chargeId"
+        onChange={handleChange}
+        className="SelecStyle inputStyle peer"
+      >
+    {Charge.length > 0 ? (
+    Charge.map((type) => (
+      <option key={type.id} value={type.id}>
+        {type.description}
+      </option>
+    ))
+  ) : (
+    <option>Cargando...</option>
+  )}
+      </select>
+             {showLabelCharge && (
+              <label
+                htmlFor="chargeId"
+                className="inputLabel"
+              >
+                Cargo del solicitante
+              </label>
             )}
-          </div>
+    </div>
+
+<div className="relative ml-2 mt-5 mb-3">
+      <select
+        name="areaId"
+        onChange={handleChange}
+        className="SelecStyle inputStyle peer"
+      >
+    {areas.length > 0 ? (
+    areas.map((type) => (
+      <option key={type.id} value={type.id}>
+        {type.description}
+      </option>
+    ))
+  ) : (
+    <option>Cargando...</option>
+  )}
+      </select>
+   
+
+{showLabelArea && (
+              <label
+                htmlFor="areaId"
+                className="inputLabel"
+              >
+                Area Que solicto el Desarollo
+              </label>
+            )}
+        
+    </div>
+
+
 
           <div className="relative ml-2 mt-5 mb-3">
-            <input
-              type="text"
-              name="responsiblePosition"
-              value={formData.responsiblePosition}
-              onChange={handleChange}
-              className="inputStyle peer"
-              placeholder=" "
-            />
-            <label htmlFor="responsiblePosition" className="inputLabel">
-              Cargo del responsable del proyecto
-            </label>
-          </div>
+      <select
+        name="methodologyId"
+        onChange={handleChange}
+        className="SelecStyle inputStyle peer"
+      >
+    {Methodology.length > 0 ? (
+    Methodology.map((type) => (
+      <option key={type.id} value={type.id}>
+        {type.description}
+      </option>
+    ))
+  ) : (
+    <option>Cargando...</option>
+  )}
+      </select>
+  
+        {showLabelmethodology && (
+              <label
+                htmlFor="methodologyId"
+                className="inputLabel"
+              >
+                Metodologia de Desarollo
+              </label>
+            )}
+        
+    </div>
 
-          <div className="relative ml-2 mt-5 mb-3">
-            <input
-              type="text"
-              name="developmentType"
-              value={formData.developmentType}
-              onChange={handleChange}
-              className="inputStyle peer"
-              placeholder=" "
-            />
-            <label htmlFor="developmentType" className="inputLabel">Tipo de Desarrollo</label>
-          </div>
+<div className="relative ml-2 mt-5 mb-3">
+      <select
+        name="developmentTypeId"
+        onChange={handleChange}
+        className="SelecStyle inputStyle peer"
+      >
+    {developmentTypes.length > 0 ? (
+    developmentTypes.map((type) => (
+      <option key={type.id} value={type.id}>
+        {type.description}
+      </option>
+    ))
+  ) : (
+    <option>Cargando...</option>
+  )}
+      </select>
+          {showLabelDevType && (
+              <label   
+                htmlFor="developmentTypeId"
+                className="inputLabel"
+              >
+               Tipo de Desarollo
+              </label>
+            )}
+    </div>
+
+
+
 
           <div className="relative ml-2 mt-5 mb-3">
             <select
@@ -169,7 +365,6 @@ const InitialData: React.FC = () => {
             {showLabel && (
               <label
                 htmlFor="typeEstimationId"
-                // className="absolute left-2 top-0 text-sm text-blue-600 transition-all"
                 className="inputLabel"
               >
                 Tipo de Estimación
@@ -180,18 +375,36 @@ const InitialData: React.FC = () => {
           {showExpertOpinionInput && (
             <div className="relative ml-2 mt-3 mb-3">
               <input
-                type="text"
-                name="email"
-                value={formData.email  || ""}
-                onChange={handleChange}
-                className="inputStyle peer"
-                placeholder=" "
+         type="text"
+         name="email"
+         value={formData.email || ""}
+         onChange={handleChange}
+         onBlur={(e) => handleBlur(e.target.value)} // 👈 aquí
+         className="inputStyle peer"
+         placeholder=" "
               />
               <label htmlFor="email" className="inputLabel">
                 Email
               </label>
+              {emailError && (
+      <p className="text-white text-sm mt-1">{emailError}</p>
+    )}
             </div>
           )}
+               {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-2xl shadow-lg w-96 text-center">
+            <h2 className="text-xl font-bold mb-4">Tiempo estimado de respuesta</h2>
+            <p className="mb-4">La fecha limite de respuesta para esta estimacion es para el <strong>{plazoEstimado?.toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" })}</strong>.</p>
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              onClick={() => setShowModal(false)}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
 
           <div className="mx-auto col-span-full mt-7 pb-8">
             <button
