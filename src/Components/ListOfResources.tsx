@@ -68,27 +68,38 @@ console.log("s"+ responseData)
 
   return (
     <div className='backimage h-screen'>
+
+<div className="absolute inset-40 rounded-sm bg-trn bg-opacity-60 backdrop-filter backdrop-blur-sm"></div>
+      <div className="blur-xl z-20 w-1/2 "></div>
+      <form className='flex h-screen items-center justify-center' onSubmit={handleSubmit}>
+        <div className='mx-auto w-3/4 grid  z-10'>
+
       <h2 className='text-white text-center text-7xl font-Embed pt-16 pb-14'>
-        Ingrese en forma de lista los recursos que serán asignados al proyecto
+        Ingrese en forma de lista los recursos<br></br> que serán asignados al proyecto
       </h2>
-      <table className='mx-auto w-3/4 overflow-auto'>
-        <thead>
-          <tr>
-            <th className='text-white font-Embed'>Lista de Recursos</th>
-          </tr>
-        </thead>
-        <tbody className='text-center'>
-          {registros.map((registro, index) => (
-            <tr className='text-white font-Embed rounded-md' key={index}>
-              <td className='text-white border rounded-lg'>{registro.descripcion}</td>
-              <td className='text-white border rounded-lg'>{registro.horas}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="mx-auto w-3/4 max-h-60 overflow-y-auto scrollbar-z scrollbar-thumb-gray-500 scrollbar-track-transparent">
+
+      <table className='w-full'>
+    <thead>
+      <tr>
+        <th className='text-white font-Embed'>Colaborador</th>
+        <th className='text-white font-Embed'>Horas</th>
+      </tr>
+    </thead>
+    <tbody className='text-center'>
+      {registros.map((registro, index) => (
+        <tr className='text-white font-Embed rounded-md' key={index}>
+          <td className='text-white border rounded-lg'>{registro.descripcion}</td>
+          <td className='text-white border rounded-lg'>{registro.horas}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  </div>
+
       <div className='mt-4 flex justify-center'>
         <input
-          className='w-2/3 bg-transparent border border-white focus:outline-none rounded-lg placeholder:text-white placeholder:text-center text-white'
+          className='w-2/5 bg-transparent border border-white focus:outline-none rounded-lg placeholder:text-white placeholder:text-center text-white'
           type="text"
           placeholder="colaborador"
           value={NuevoRecurso}
@@ -96,19 +107,21 @@ console.log("s"+ responseData)
         />
         
         <input
-          className='w-2/3 bg-transparent border border-white focus:outline-none rounded-lg placeholder:text-white placeholder:text-center text-white'
+          className='w-2/5 bg-transparent border border-white focus:outline-none rounded-lg placeholder:text-white placeholder:text-center text-white'
           type="text"
           placeholder="Horas"
           value={Horas||'' }
           onChange={(e)=>handleInputChange(e,'horas')}
         />
-        <button className='text-white border rounded-md ml-2 h-7 w-7' onClick={agregarRegistro}>+</button>
+        <button  type="button" className='text-white border rounded-md ml-2 h-7 w-7' onClick={agregarRegistro}>+</button>
       </div>
       <div className="flex justify-center mt-7 pb-8">
       <button onClick={handleSubmit} className='pl-5 pr-5 pt-2 pb-2 font-Embed text-white bg-gray-400 opacity-90 hover:bg-gradient-to-r from-cyan-500 to-cyan-200 h-10 w-44 border-b-gray-950 rounded-lg text-xs text-center'>
           Send
         </button>
       </div>
+      </div>
+      </form>
     </div>
   );
 };

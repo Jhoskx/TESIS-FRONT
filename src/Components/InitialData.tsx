@@ -10,7 +10,7 @@ interface FormData {
   developmentTypeId: number | undefined;
   typeEstimationId: number | undefined;
   expertOpinion?: string;
-  email?:string;
+  email?: string;
 }
 
 
@@ -46,102 +46,102 @@ const InitialData: React.FC = () => {
     developmentTypeId: undefined,
     typeEstimationId: undefined,
     expertOpinion: '',
-    email:'',
+    email: '',
   });
 
-//#region 
-// const [developmentTypes, setDevelopmentTypes] = useState([]);
-const [developmentTypes, setDevelopmentTypes] = useState<DevelopmentType[]>([]);
+  //#region 
+  // const [developmentTypes, setDevelopmentTypes] = useState([]);
+  const [developmentTypes, setDevelopmentTypes] = useState<DevelopmentType[]>([]);
 
-const [areas, setAreas] =  useState<Area[]>([]);
-const [Charge, setCharges] = useState<Charge[]>([]);
-const [Methodology, setMethodology] = useState<Methodology[]>([]);
-const [showModal, setShowModal] = useState(false);
-const [emailError, setEmailError] = useState<string | null>(null);
+  const [areas, setAreas] = useState<Area[]>([]);
+  const [Charge, setCharges] = useState<Charge[]>([]);
+  const [Methodology, setMethodology] = useState<Methodology[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
 
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      console.log("Llamando a la API...");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log("Llamando a la API...");
 
-      const [AreaDev, DevMeth, ChargeRes,DevType] = await Promise.all([
-        axios.get("https://localhost:7211/api/Master/Areas"),
-        axios.get("https://localhost:7211/api/Master/DevelopmentMethodology"),
-        axios.get("https://localhost:7211/api/Master/PositionResponsible"),
-        axios.get("https://localhost:7211/api/Master/DevelopmentType"),
-      ]);
+        const [AreaDev, DevMeth, ChargeRes, DevType] = await Promise.all([
+          axios.get("https://localhost:7211/api/Master/Areas"),
+          axios.get("https://localhost:7211/api/Master/DevelopmentMethodology"),
+          axios.get("https://localhost:7211/api/Master/PositionResponsible"),
+          axios.get("https://localhost:7211/api/Master/DevelopmentType"),
+        ]);
 
-      console.log("Datos obtenidos - Development Types:", AreaDev.data);
+        console.log("Datos obtenidos - Development Types:", AreaDev.data);
 
-      if (Array.isArray(AreaDev.data) && AreaDev.data.length > 0) {
-        setAreas(AreaDev.data);
-        setMethodology(DevMeth.data);
-        setCharges(ChargeRes.data);
-        setDevelopmentTypes(DevType.data);
-    
-        console.log(AreaDev.data);
-        console.log(DevMeth.data);
-        console.log(ChargeRes.data);
-        console.log(DevType.data);
+        if (Array.isArray(AreaDev.data) && AreaDev.data.length > 0) {
+          setAreas(AreaDev.data);
+          setMethodology(DevMeth.data);
+          setCharges(ChargeRes.data);
+          setDevelopmentTypes(DevType.data);
 
-      } else {
-        console.warn("La API de Development Types devolvió un array vacío o no válido.");
+          console.log(AreaDev.data);
+          console.log(DevMeth.data);
+          console.log(ChargeRes.data);
+          console.log(DevType.data);
+
+        } else {
+          console.warn("La API de Development Types devolvió un array vacío o no válido.");
+        }
+
+
+      } catch (error) {
+        console.error("Error al obtener los datos:", error);
       }
+    };
 
-      
-    } catch (error) {
-      console.error("Error al obtener los datos:", error);
+    fetchData();
+  }, []);
+
+  function sumarDiasHabiles(fecha: Date, diasHabiles: number): Date {
+    let resultado = new Date(fecha);
+    let contador = 0;
+
+    while (contador < diasHabiles) {
+      resultado.setDate(resultado.getDate() + 1);
+      const dia = resultado.getDay();
+      // 0: domingo, 6: sábado
+      if (dia !== 0 && dia !== 6) {
+        contador++;
+      }
+    }
+
+    return resultado;
+  }
+  const handleBlur = (email: string) => {
+    const isValidEmail = /\S+@\S+\.\S+/.test(email);
+    console.log("onBlur ejecutado, email válido?", isValidEmail);
+    const fechaLimite = sumarDiasHabiles(new Date(), 15);
+    setPlazoEstimado(fechaLimite); // 👈 guardamos la fecha en estado
+    setShowModal(true);
+
+    if (isValidEmail) {
+      setEmailError(null); // limpia el error
+      setShowModal(true);  // muestra modal
+    } else {
+      setEmailError("El email ingresado no es válido."); // muestra error
+      setShowModal(false); // evita mostrar el modal si es inválido
     }
   };
 
-  fetchData();
-}, []);
-
-function sumarDiasHabiles(fecha: Date, diasHabiles: number): Date {
-  let resultado = new Date(fecha);
-  let contador = 0;
-
-  while (contador < diasHabiles) {
-    resultado.setDate(resultado.getDate() + 1);
-    const dia = resultado.getDay();
-    // 0: domingo, 6: sábado
-    if (dia !== 0 && dia !== 6) {
-      contador++;
-    }
-  }
-
-  return resultado;
-}
-const handleBlur = (email: string) => {
-  const isValidEmail = /\S+@\S+\.\S+/.test(email);
-  console.log("onBlur ejecutado, email válido?", isValidEmail);
-  const fechaLimite = sumarDiasHabiles(new Date(), 15);
-  setPlazoEstimado(fechaLimite); // 👈 guardamos la fecha en estado
-  setShowModal(true);
-
-  if (isValidEmail) {
-    setEmailError(null); // limpia el error
-    setShowModal(true);  // muestra modal
-  } else {
-    setEmailError("El email ingresado no es válido."); // muestra error
-    setShowModal(false); // evita mostrar el modal si es inválido
-  }
-};
 
 
+  // 🔹 useEffect para ver cuando developmentTypes realmente cambie
+  useEffect(() => {
+    console.log("Estado actualizado:", developmentTypes);
+  }, [developmentTypes]);
+  //#endregion
+  // useEffect(() => {
+  //   if (formData.email?.trim() !== "") {
+  //     setShowModal(true);
+  //   }
+  // }, [formData.email]);
 
-// 🔹 useEffect para ver cuando developmentTypes realmente cambie
-useEffect(() => {
-  console.log("Estado actualizado:", developmentTypes);
-}, [developmentTypes]);
-//#endregion
-// useEffect(() => {
-//   if (formData.email?.trim() !== "") {
-//     setShowModal(true);
-//   }
-// }, [formData.email]);
-  
   const [showExpertOpinionInput, setShowExpertOpinionInput] = useState(false);
 
   const [showLabel, setShowLabel,] = useState(false);
@@ -157,34 +157,34 @@ useEffect(() => {
     const { name, value } = e.target;
 
     // Verifica si el campo cambiado es "typeEstimationId"
-   
-  if (name === "typeEstimationId") {
-    setShowLabel(value !== ""); 
-    setShowExpertOpinionInput(value === "2");
-    
-  }
 
-  if (name === "methodologyId") {
-    setShowLabelmethodology(Number(value) !== 3 && value !== ""); 
-  }
+    if (name === "typeEstimationId") {
+      setShowLabel(value !== "");
+      setShowExpertOpinionInput(value === "2");
 
-  if (name === "areaId") {
-    setShowLabelArea(Number(value) !== 1 && value !== "");  
-  }
+    }
+
+    if (name === "methodologyId") {
+      setShowLabelmethodology(Number(value) !== 3 && value !== "");
+    }
+
+    if (name === "areaId") {
+      setShowLabelArea(Number(value) !== 1 && value !== "");
+    }
 
 
-  if (name === "chargeId") {
-    setShowLabelCharge(Number(value) !== 1 && value !== "");  
-  }
+    if (name === "chargeId") {
+      setShowLabelCharge(Number(value) !== 1 && value !== "");
+    }
 
-  if (name === "developmentTypeId") {
-    setShowLabelDevYpe(Number(value) !== 2 && value !== "");  
-  }
+    if (name === "developmentTypeId") {
+      setShowLabelDevYpe(Number(value) !== 2 && value !== "");
+    }
 
-  if (name === "name") {
-    const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]*$/;
-    if (!soloLetras.test(value)) return; // Ignora caracteres inválidos
-  }
+    if (name === "name") {
+      const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]*$/;
+      if (!soloLetras.test(value)) return; // Ignora caracteres inválidos
+    }
 
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -212,7 +212,7 @@ useEffect(() => {
 
 
 
-   
+
   };
 
   return (
@@ -237,23 +237,23 @@ useEffect(() => {
             <label htmlFor="name" className="inputLabel">Nombre del proyecto</label>
           </div>
 
-<div className="relative ml-2 mt-5 mb-3">
-      <select
-        name="chargeId"
-        onChange={handleChange}
-        className="SelecStyle inputStyle peer"
-      >
-    {Charge.length > 0 ? (
-    Charge.map((type) => (
-      <option key={type.id} value={type.id}>
-        {type.description}
-      </option>
-    ))
-  ) : (
-    <option>Cargando...</option>
-  )}
-      </select>
-             {showLabelCharge && (
+          <div className="relative ml-2 mt-5 mb-3">
+            <select
+              name="chargeId"
+              onChange={handleChange}
+              className="SelecStyle inputStyle peer"
+            >
+              {Charge.length > 0 ? (
+                Charge.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.description}
+                  </option>
+                ))
+              ) : (
+                <option>Cargando...</option>
+              )}
+            </select>
+            {showLabelCharge && (
               <label
                 htmlFor="chargeId"
                 className="inputLabel"
@@ -261,27 +261,27 @@ useEffect(() => {
                 Cargo del solicitante
               </label>
             )}
-    </div>
+          </div>
 
-<div className="relative ml-2 mt-5 mb-3">
-      <select
-        name="areaId"
-        onChange={handleChange}
-        className="SelecStyle inputStyle peer"
-      >
-    {areas.length > 0 ? (
-    areas.map((type) => (
-      <option key={type.id} value={type.id}>
-        {type.description}
-      </option>
-    ))
-  ) : (
-    <option>Cargando...</option>
-  )}
-      </select>
-   
+          <div className="relative ml-2 mt-5 mb-3">
+            <select
+              name="areaId"
+              onChange={handleChange}
+              className="SelecStyle inputStyle peer"
+            >
+              {areas.length > 0 ? (
+                areas.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.description}
+                  </option>
+                ))
+              ) : (
+                <option>Cargando...</option>
+              )}
+            </select>
 
-{showLabelArea && (
+
+            {showLabelArea && (
               <label
                 htmlFor="areaId"
                 className="inputLabel"
@@ -289,29 +289,29 @@ useEffect(() => {
                 Area Que solicto el Desarollo
               </label>
             )}
-        
-    </div>
+
+          </div>
 
 
 
           <div className="relative ml-2 mt-5 mb-3">
-      <select
-        name="methodologyId"
-        onChange={handleChange}
-        className="SelecStyle inputStyle peer"
-      >
-    {Methodology.length > 0 ? (
-    Methodology.map((type) => (
-      <option key={type.id} value={type.id}>
-        {type.description}
-      </option>
-    ))
-  ) : (
-    <option>Cargando...</option>
-  )}
-      </select>
-  
-        {showLabelmethodology && (
+            <select
+              name="methodologyId"
+              onChange={handleChange}
+              className="SelecStyle inputStyle peer"
+            >
+              {Methodology.length > 0 ? (
+                Methodology.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.description}
+                  </option>
+                ))
+              ) : (
+                <option>Cargando...</option>
+              )}
+            </select>
+
+            {showLabelmethodology && (
               <label
                 htmlFor="methodologyId"
                 className="inputLabel"
@@ -319,34 +319,34 @@ useEffect(() => {
                 Metodologia de Desarollo
               </label>
             )}
-        
-    </div>
 
-<div className="relative ml-2 mt-5 mb-3">
-      <select
-        name="developmentTypeId"
-        onChange={handleChange}
-        className="SelecStyle inputStyle peer"
-      >
-    {developmentTypes.length > 0 ? (
-    developmentTypes.map((type) => (
-      <option key={type.id} value={type.id}>
-        {type.description}
-      </option>
-    ))
-  ) : (
-    <option>Cargando...</option>
-  )}
-      </select>
-          {showLabelDevType && (
-              <label   
+          </div>
+
+          <div className="relative ml-2 mt-5 mb-3">
+            <select
+              name="developmentTypeId"
+              onChange={handleChange}
+              className="SelecStyle inputStyle peer"
+            >
+              {developmentTypes.length > 0 ? (
+                developmentTypes.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.description}
+                  </option>
+                ))
+              ) : (
+                <option>Cargando...</option>
+              )}
+            </select>
+            {showLabelDevType && (
+              <label
                 htmlFor="developmentTypeId"
                 className="inputLabel"
               >
-               Tipo de Desarollo
+                Tipo de Desarollo
               </label>
             )}
-    </div>
+          </div>
 
 
 
@@ -375,36 +375,36 @@ useEffect(() => {
           {showExpertOpinionInput && (
             <div className="relative ml-2 mt-3 mb-3">
               <input
-         type="text"
-         name="email"
-         value={formData.email || ""}
-         onChange={handleChange}
-         onBlur={(e) => handleBlur(e.target.value)} // 👈 aquí
-         className="inputStyle peer"
-         placeholder=" "
+                type="text"
+                name="email"
+                value={formData.email || ""}
+                onChange={handleChange}
+                onBlur={(e) => handleBlur(e.target.value)} // 👈 aquí
+                className="inputStyle peer"
+                placeholder=" "
               />
               <label htmlFor="email" className="inputLabel">
                 Email
               </label>
               {emailError && (
-      <p className="text-white text-sm mt-1">{emailError}</p>
-    )}
+                <p className="text-white text-sm mt-1">{emailError}</p>
+              )}
             </div>
           )}
-               {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-2xl shadow-lg w-96 text-center">
-            <h2 className="text-xl font-bold mb-4">Tiempo estimado de respuesta</h2>
-            <p className="mb-4">La fecha limite de respuesta para esta estimacion es para el <strong>{plazoEstimado?.toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" })}</strong>.</p>
-            <button
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-              onClick={() => setShowModal(false)}
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
-      )}
+          {showModal && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+              <div className="bg-white p-6 rounded-2xl shadow-lg w-96 text-center">
+                <h2 className="text-xl font-bold mb-4">Tiempo estimado de respuesta</h2>
+                <p className="mb-4">La fecha limite de respuesta para esta estimacion es para el <strong>{plazoEstimado?.toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" })}</strong>.</p>
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="mx-auto col-span-full mt-7 pb-8">
             <button

@@ -62,7 +62,16 @@ const UseCases: React.FC = () => {
 
   return (
     <div className='backimage h-screen'>
+
+
+<div className="absolute inset-40 rounded-sm bg-trn bg-opacity-60 backdrop-filter backdrop-blur-sm"></div>
+      <form className='flex h-screen items-center justify-center' onSubmit={handleSubmit}>
+        <div className='mx-auto w-3/4 grid  z-10'>
+
       <h2 className='text-white text-center text-7xl font-Embed pt-16 pb-14'>Ingrese todos los casos de uso A continuación</h2>
+      <div className="mx-auto w-3/4 max-h-60 overflow-y-auto scrollbar-z scrollbar-thumb-gray-500 scrollbar-track-transparent">
+   
+      
       <table className='mx-auto w-3/4 overflow-auto'>
         <thead>
           <tr>
@@ -78,6 +87,7 @@ const UseCases: React.FC = () => {
           ))}
         </tbody>
       </table>
+      </div>
       <div className='mt-4 flex justify-center'>
       <input
     className='w-2/5 bg-transparent border border-white focus:outline-none rounded-lg placeholder:text-white placeholder:text-center text-white'
@@ -105,6 +115,8 @@ const UseCases: React.FC = () => {
           Send
         </button>
       </div>
+      </div>
+      </form>
     </div>
   );
 };
