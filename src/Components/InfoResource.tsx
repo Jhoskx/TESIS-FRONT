@@ -42,7 +42,7 @@ const Layout = () => {
         hover:bg-gradient-to-r from-cyan-500 to-cyan-200 h-10 w-44
         border-b-gray-950 rounded-lg  py-2.5 text-center text-lg'
                 >
-                    Abrir Modal
+                    Informacion Recuros
                 </button>
             </div>
 
